@@ -1,0 +1,6 @@
+{
+  "appId": "com.nexuslab.app",
+  "appName": "NEXUS Lab",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
