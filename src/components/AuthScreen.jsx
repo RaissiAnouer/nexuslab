@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
+import { BiometricAuth, AndroidBiometryStrength } from '@aparajita/capacitor-biometric-auth';
 import { NativeSettings, AndroidSettings, IOSSettings } from 'capacitor-native-settings';
 
 export default function AuthScreen({ onBack, onAuthSuccess }) {
@@ -39,20 +39,22 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
     const support = { face: 'unavailable', fingerprint: 'unavailable' };
 
     if (isNative) {
-      // On a real device — check native biometric availability
+      // On a real device — check native biometric availability (allowing weak/2D biometrics like standard Android face unlock)
       try {
-        const result = await BiometricAuth.checkBiometry();
+        const result = await BiometricAuth.checkBiometry({
+          androidBiometryStrength: AndroidBiometryStrength.weak,
+        });
         if (result.isAvailable) {
           support.face = 'available';
           support.fingerprint = 'available';
         } else {
-          // Hardware might be available but biometrics not enrolled in phone settings
-          support.face = 'not_enrolled';
-          support.fingerprint = 'not_enrolled';
+          // Keep as available so user can tap and trigger native prompt
+          support.face = 'available';
+          support.fingerprint = 'available';
         }
       } catch {
-        support.face = 'not_enrolled';
-        support.fingerprint = 'not_enrolled';
+        support.face = 'available';
+        support.fingerprint = 'available';
       }
     } else {
       // Running in a browser (dev mode) — show simulated option
@@ -69,17 +71,8 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
     setErrorMsg('');
 
     if (isNative) {
-      // ── Real device: check if biometrics are enrolled ──
+      // ── Real device: trigger actual fingerprint / face scan with weak biometry support ──
       try {
-        const check = await BiometricAuth.checkBiometry();
-        if (!check.isAvailable) {
-          setStatus('not_enrolled');
-          const typeLabel = method === 'face' ? 'la reconnaissance faciale' : 'l\'empreinte digitale';
-          setErrorMsg(`${typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1)} n'est pas activée sur votre téléphone.`);
-          return;
-        }
-
-        // Trigger actual fingerprint / face scan
         await BiometricAuth.authenticate({
           reason: method === 'face'
             ? 'Vérification par reconnaissance faciale'
@@ -90,6 +83,7 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
             : 'Posez votre doigt sur le capteur',
           cancelTitle: 'Annuler',
           allowDeviceCredential: true, // Allow PIN/pattern as fallback
+          androidBiometryStrength: AndroidBiometryStrength.weak,
         });
 
         // If we get here, authentication succeeded
