@@ -15,12 +15,18 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
   const openDeviceSettings = async () => {
     try {
       await NativeSettings.open({
-        optionAndroid: AndroidSettings.Security,
+        optionAndroid: AndroidSettings.BiometricEnroll || 'biometric_enroll',
         optionIOS: IOSSettings.TouchIdPasscode,
       });
     } catch {
-      // Fallback
-      alert("Veuillez ouvrir les Paramètres > Sécurité de votre téléphone pour configurer l'authentification biométrique.");
+      try {
+        await NativeSettings.open({
+          optionAndroid: AndroidSettings.Security,
+          optionIOS: IOSSettings.TouchIdPasscode,
+        });
+      } catch {
+        alert("Veuillez ouvrir les Paramètres > Sécurité de votre téléphone pour configurer l'authentification biométrique.");
+      }
     }
   };
 
