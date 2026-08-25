@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
+import { NativeSettings, AndroidSettings, IOSSettings } from 'capacitor-native-settings';
 
 export default function AuthScreen({ onBack, onAuthSuccess }) {
-  const [status, setStatus] = useState('selecting'); // 'selecting' | 'authenticating' | 'success' | 'failed'
+  const [status, setStatus] = useState('selecting'); // 'selecting' | 'authenticating' | 'success' | 'failed' | 'not_enrolled'
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [biometricSupport, setBiometricSupport] = useState({ face: 'checking', fingerprint: 'checking' });
   const [errorMsg, setErrorMsg] = useState('');
 
   const isNative = Capacitor.isNativePlatform();
+
+  // Helper to open device security/biometric settings
+  const openDeviceSettings = async () => {
+    try {
+      await NativeSettings.open({
+        optionAndroid: AndroidSettings.Security,
+        optionIOS: IOSSettings.TouchIdPasscode,
+      });
+    } catch {
+      // Fallback
+      alert("Veuillez ouvrir les Paramètres > Sécurité de votre téléphone pour configurer l'authentification biométrique.");
+    }
+  };
 
   // Check device biometric capabilities
   useEffect(() => {
@@ -23,22 +37,21 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
       try {
         const result = await BiometricAuth.checkBiometry();
         if (result.isAvailable) {
-          // Device has biometric hardware and it's configured
           support.face = 'available';
           support.fingerprint = 'available';
+        } else {
+          // Hardware might be available but biometrics not enrolled in phone settings
+          support.face = 'not_enrolled';
+          support.fingerprint = 'not_enrolled';
         }
       } catch {
-        // Plugin error — fall back
+        support.face = 'not_enrolled';
+        support.fingerprint = 'not_enrolled';
       }
     } else {
       // Running in a browser (dev mode) — show simulated option
       support.face = 'simulated';
       support.fingerprint = 'simulated';
-    }
-
-    // If native but no biometrics available, mark as unavailable
-    if (isNative && support.face === 'unavailable') {
-      // Both stay 'unavailable' — user will see "not available" cards
     }
 
     setBiometricSupport(support);
@@ -50,8 +63,17 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
     setErrorMsg('');
 
     if (isNative) {
-      // ── Real device: trigger actual fingerprint / face scan ──
+      // ── Real device: check if biometrics are enrolled ──
       try {
+        const check = await BiometricAuth.checkBiometry();
+        if (!check.isAvailable) {
+          setStatus('not_enrolled');
+          const typeLabel = method === 'face' ? 'la reconnaissance faciale' : 'l\'empreinte digitale';
+          setErrorMsg(`${typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1)} n'est pas activée sur votre téléphone.`);
+          return;
+        }
+
+        // Trigger actual fingerprint / face scan
         await BiometricAuth.authenticate({
           reason: method === 'face'
             ? 'Vérification par reconnaissance faciale'
@@ -71,15 +93,23 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
         setTimeout(() => onAuthSuccess({ name: 'Utilisateur Lab', method }), 800);
       } catch (err) {
         // Authentication failed or was cancelled
-        const message = err?.message || '';
-        if (message.includes('cancel') || message.includes('Cancel')) {
+        const message = err?.message || err?.code || '';
+        const msgStr = String(message).toLowerCase();
+
+        if (msgStr.includes('enrolled') || msgStr.includes('notenrolled') || msgStr.includes('not_enrolled')) {
+          setStatus('not_enrolled');
+          const typeLabel = method === 'face' ? 'la reconnaissance faciale' : 'l\'empreinte digitale';
+          setErrorMsg(`${typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1)} n'est pas configurée ou désactivée sur votre téléphone.`);
+        } else if (msgStr.includes('cancel')) {
           setErrorMsg('L\'authentification a été annulée.');
-        } else if (message.includes('lockout')) {
+          setStatus('failed');
+        } else if (msgStr.includes('lockout')) {
           setErrorMsg('Trop de tentatives. Veuillez réessayer plus tard.');
+          setStatus('failed');
         } else {
           setErrorMsg('Échec de l\'authentification. Veuillez réessayer.');
+          setStatus('failed');
         }
-        setStatus('failed');
       }
     } else {
       // ── Browser dev mode: simple simulation ──
@@ -98,12 +128,12 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
     setErrorMsg('');
   };
 
-  // ── Authenticating / Result States ──
-  if (status === 'authenticating' || status === 'success' || status === 'failed') {
+  // ── Authenticating / Result / Not Enrolled States ──
+  if (status === 'authenticating' || status === 'success' || status === 'failed' || status === 'not_enrolled') {
     return (
       <div className="auth-screen">
         <div className="bio-gateway">
-          {status === 'failed' && (
+          {(status === 'failed' || status === 'not_enrolled') && (
             <button className="back-btn" onClick={handleRetry}
               style={{ position: 'absolute', top: '24px', left: '24px' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
@@ -114,6 +144,12 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
           <div className={`bio-ring-lg ${status}`}>
             {status === 'success' ? (
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+            ) : status === 'not_enrolled' ? (
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ffb703" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
             ) : selectedMethod === 'face' ? (
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={status === 'failed' ? '#555' : 'white'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/>
@@ -143,6 +179,20 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
               <>
                 <h2 className="bio-title">Accès Autorisé</h2>
                 <p className="bio-subtitle">Identité vérifiée avec succès</p>
+              </>
+            )}
+            {status === 'not_enrolled' && (
+              <>
+                <h2 className="bio-title">Biométrie non activée</h2>
+                <p className="bio-subtitle" style={{ color: '#ffb703' }}>{errorMsg}</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px', width: '280px' }}>
+                  <button className="btn-primary" style={{ width: '100%' }} onClick={openDeviceSettings}>
+                    ⚙️ Activer dans les Paramètres
+                  </button>
+                  <button className="btn-ghost" onClick={handleRetry}>
+                    Retour au choix
+                  </button>
+                </div>
               </>
             )}
             {status === 'failed' && (
