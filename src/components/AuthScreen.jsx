@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
 
 export default function AuthScreen({ onBack, onAuthSuccess }) {
   const [status, setStatus] = useState('selecting'); // 'selecting' | 'authenticating' | 'success' | 'failed'
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [biometricSupport, setBiometricSupport] = useState({ face: 'checking', fingerprint: 'checking' });
   const [errorMsg, setErrorMsg] = useState('');
+
+  const isNative = Capacitor.isNativePlatform();
 
   // Check device biometric capabilities
   useEffect(() => {
@@ -14,53 +18,30 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
   const checkBiometricAvailability = async () => {
     const support = { face: 'unavailable', fingerprint: 'unavailable' };
 
-    if (window.PublicKeyCredential) {
+    if (isNative) {
+      // On a real device — check native biometric availability
       try {
-        const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-        if (available) {
+        const result = await BiometricAuth.checkBiometry();
+        if (result.isAvailable) {
+          // Device has biometric hardware and it's configured
           support.face = 'available';
           support.fingerprint = 'available';
         }
       } catch {
-        // WebAuthn not supported
+        // Plugin error — fall back
       }
-    }
-
-    // No native biometric support — show simulation mode
-    if (support.face === 'unavailable' && support.fingerprint === 'unavailable') {
+    } else {
+      // Running in a browser (dev mode) — show simulated option
       support.face = 'simulated';
       support.fingerprint = 'simulated';
     }
 
+    // If native but no biometrics available, mark as unavailable
+    if (isNative && support.face === 'unavailable') {
+      // Both stay 'unavailable' — user will see "not available" cards
+    }
+
     setBiometricSupport(support);
-  };
-
-  // Trigger the device's native biometric prompt (Face ID / fingerprint / Windows Hello)
-  // We use credentials.create() purely to invoke the OS biometric verification.
-  // The credential itself is not stored — we only care about pass/fail.
-  const triggerBiometricVerification = async () => {
-    const credential = await navigator.credentials.create({
-      publicKey: {
-        challenge: crypto.getRandomValues(new Uint8Array(32)),
-        rp: { name: 'NEXUS Lab', id: window.location.hostname },
-        user: {
-          id: crypto.getRandomValues(new Uint8Array(16)), // Random each time — no registration
-          name: 'verification',
-          displayName: 'Vérification biométrique',
-        },
-        pubKeyCredParams: [
-          { type: 'public-key', alg: -7 },
-          { type: 'public-key', alg: -257 },
-        ],
-        authenticatorSelection: {
-          authenticatorAttachment: 'platform',
-          userVerification: 'required',
-        },
-        timeout: 60000,
-      },
-    });
-
-    return !!credential;
   };
 
   const authenticate = async (method) => {
@@ -68,50 +49,47 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
     setStatus('authenticating');
     setErrorMsg('');
 
-    const isSimulated = biometricSupport[method] === 'simulated';
-
-    // ── Real biometric verification ──
-    if (!isSimulated && window.PublicKeyCredential) {
+    if (isNative) {
+      // ── Real device: trigger actual fingerprint / face scan ──
       try {
-        const passed = await triggerBiometricVerification();
+        await BiometricAuth.authenticate({
+          reason: method === 'face'
+            ? 'Vérification par reconnaissance faciale'
+            : 'Vérification par empreinte digitale',
+          title: 'NEXUS Lab — Authentification',
+          subtitle: method === 'face'
+            ? 'Regardez votre appareil pour vous authentifier'
+            : 'Posez votre doigt sur le capteur',
+          cancelTitle: 'Annuler',
+          allowDeviceCredential: true, // Allow PIN/pattern as fallback
+        });
 
-        if (passed) {
-          setStatus('success');
-          localStorage.setItem('nexus_auth_method', method);
-          localStorage.setItem('nexus_authenticated', 'true');
-          setTimeout(() => onAuthSuccess({ name: 'Utilisateur Lab', method }), 800);
-          return;
-        }
-      } catch (err) {
-        if (err.name === 'NotAllowedError') {
-          setErrorMsg('L\'authentification a été annulée ou refusée.');
-        } else {
-          setErrorMsg('Échec de l\'authentification. Veuillez réessayer.');
-        }
-        setStatus('failed');
-        return;
-      }
-    }
-
-    // ── Simulated fallback for devices without biometric hardware ──
-    setTimeout(() => {
-      const label = method === 'face' ? 'Authentification faciale' : 'Empreinte digitale';
-      const confirmed = window.confirm(
-        `Prompt de vérification ${label}\n\n` +
-        `Sur un appareil réel, le système vérifierait votre ${method === 'face' ? 'visage' : 'empreinte digitale'}.\n\n` +
-        'OK = Authentifié avec succès\nAnnuler = Échec de l\'authentification'
-      );
-
-      if (confirmed) {
+        // If we get here, authentication succeeded
         setStatus('success');
         localStorage.setItem('nexus_auth_method', method);
         localStorage.setItem('nexus_authenticated', 'true');
         setTimeout(() => onAuthSuccess({ name: 'Utilisateur Lab', method }), 800);
-      } else {
-        setErrorMsg('L\'authentification a échoué ou a été annulée.');
+      } catch (err) {
+        // Authentication failed or was cancelled
+        const message = err?.message || '';
+        if (message.includes('cancel') || message.includes('Cancel')) {
+          setErrorMsg('L\'authentification a été annulée.');
+        } else if (message.includes('lockout')) {
+          setErrorMsg('Trop de tentatives. Veuillez réessayer plus tard.');
+        } else {
+          setErrorMsg('Échec de l\'authentification. Veuillez réessayer.');
+        }
         setStatus('failed');
       }
-    }, 600);
+    } else {
+      // ── Browser dev mode: simple simulation ──
+      setTimeout(() => {
+        setStatus('success');
+        localStorage.setItem('nexus_auth_method', method);
+        localStorage.setItem('nexus_authenticated', 'true');
+        setTimeout(() => onAuthSuccess({ name: 'Utilisateur Lab', method }), 800);
+      }, 600);
+    }
   };
 
   const handleRetry = () => {
