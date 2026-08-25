@@ -40,7 +40,7 @@ export default function RecordForm({ registerId, onCancel, onSaveRecord, onViewR
     const newErrors = {};
     step.fields.forEach(f => {
       if (f.required && !formData[f.name]?.toString().trim()) {
-        newErrors[f.name] = 'Champ requis';
+        newErrors[f.name] = 'Champ obligatoire';
       }
     });
     setErrors(newErrors);
@@ -80,17 +80,27 @@ export default function RecordForm({ registerId, onCancel, onSaveRecord, onViewR
   if (savedRecord) {
     return (
       <div className="form-screen">
-        <div className="success-screen">
-          <div className="success-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><path d="M20 6 9 17l-5-5"/></svg>
-          </div>
-          <h2>Enregistrement effectué avec succès</h2>
-          <p>Votre fiche a été enregistrée dans le {reg?.name}.</p>
-          <div className="record-id">{savedRecord.id}</div>
-          <div className="success-actions">
-            <button className="btn-small" onClick={() => onViewRecord(savedRecord)}>Voir la fiche</button>
-            <button className="btn-secondary" onClick={() => { setSavedRecord(null); setCurrentStep(0); setFormData({}); }}>Créer une autre fiche</button>
-            <button className="btn-secondary" onClick={onCancel}>Retour au registre</button>
+        <div className="form-screen-inner">
+          <div className="success-screen">
+            <div className="success-icon-cyber">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#52c41a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <h2>Fiche Créée Avec Succès</h2>
+            <p>L'enregistrement a été intégré au registre <strong>{reg?.name}</strong>.</p>
+            <div className="record-id-badge">{savedRecord.id}</div>
+            <div className="success-actions-sym">
+              <button className="btn-primary" onClick={() => onViewRecord(savedRecord)}>
+                👁️ Voir la fiche
+              </button>
+              <button className="btn-secondary" onClick={() => { setSavedRecord(null); setCurrentStep(0); setFormData({}); }}>
+                + Nouvelle fiche
+              </button>
+              <button className="btn-ghost" onClick={onCancel}>
+                Retour au registre
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -98,7 +108,7 @@ export default function RecordForm({ registerId, onCancel, onSaveRecord, onViewR
   }
 
   // ── Step Labels ──
-  const stepLabels = [...config.steps.map(s => s.title), 'Vérification'];
+  const stepLabels = [...config.steps.map(s => s.title), 'Vérification & Enregistrement'];
 
   return (
     <div className="form-screen">
@@ -111,129 +121,166 @@ export default function RecordForm({ registerId, onCancel, onSaveRecord, onViewR
         />
       )}
 
-      {/* Toolbar */}
-      <div className="reg-toolbar">
-        <div className="reg-toolbar-left">
-          <button className="back-btn" onClick={onCancel}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-            Annuler
-          </button>
-          <h1>{config.newButtonLabel.replace('+ ', '')}</h1>
+      {/* Symmetrical Top Bar */}
+      <div className="form-top-bar">
+        <button className="back-btn form-nav-btn" onClick={onCancel} title="Annuler">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
+          </svg>
+          <span>Annuler</span>
+        </button>
+
+        <div className="form-title-wrap">
+          <span className="form-reg-tag">{reg?.name}</span>
+          <h1 className="form-main-heading">{config.newButtonLabel.replace('+ ', '')}</h1>
         </div>
-        <div className="reg-toolbar-right">
-          <button
-            className="ocr-scan-btn"
-            onClick={() => setShowScanner(true)}
-            title="Scanner un document pour remplir automatiquement"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
-              <circle cx="12" cy="13" r="3"/>
-            </svg>
-            Scanner
-          </button>
-        </div>
+
+        <button
+          className="ocr-scan-btn form-scan-action"
+          onClick={() => setShowScanner(true)}
+          title="Scanner un document papier"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+            <circle cx="12" cy="13" r="3"/>
+          </svg>
+          <span>Scanner</span>
+        </button>
       </div>
 
-      <div className="form-body">
-        {/* Step Indicator */}
-        <div className="step-indicator">
-          {stepLabels.map((label, i) => (
-            <React.Fragment key={i}>
-              <div className="step-dot">
-                <div className={`step-num ${i === currentStep ? 'active' : i < currentStep ? 'done' : ''}`}>
-                  {i < currentStep ? '✓' : i + 1}
-                </div>
-                <span className={`step-label ${i === currentStep ? 'active' : ''}`}>{label}</span>
-              </div>
-              {i < stepLabels.length - 1 && <div className="step-line" />}
-            </React.Fragment>
-          ))}
-        </div>
-
-        {/* Review Step */}
-        {isReviewStep ? (
-          <>
-            <h2 className="form-step-title">Récapitulatif &amp; Vérification</h2>
-            <p style={{ fontSize: '0.82rem', color: '#888', marginBottom: '8px' }}>
-              Veuillez vérifier vos informations ci-dessous avant d'enregistrer.
-            </p>
-            {config.steps.map((step, si) => (
-              <div className="review-section" key={si}>
-                <h3>{step.title}</h3>
-                {step.fields.map(f => (
-                  <div className="review-row" key={f.name}>
-                    <span className="r-label">{f.label}</span>
-                    <span className="r-value">{formData[f.name] || '—'}</span>
+      {/* Symmetrical Centered Form Body */}
+      <div className="form-body-wrapper">
+        <div className="form-card-container">
+          {/* Responsive Step Progress Bar */}
+          <div className="step-indicator-sym">
+            <div className="step-progress-track">
+              {stepLabels.map((_, i) => (
+                <React.Fragment key={i}>
+                  <div
+                    className={`step-node ${i === currentStep ? 'active' : i < currentStep ? 'done' : ''}`}
+                    title={stepLabels[i]}
+                  >
+                    {i < currentStep ? (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    ) : (
+                      i + 1
+                    )}
                   </div>
-                ))}
-              </div>
-            ))}
-            <div className="form-actions">
-              <button className="btn-secondary" onClick={handlePrev}>← Précédent</button>
-              <button className="btn-primary" style={{ padding: '12px 32px' }} onClick={() => handleSave(false)}>Enregistrer la fiche</button>
-              <button className="btn-secondary" onClick={() => handleSave(true)}>Enregistrer comme brouillon</button>
-            </div>
-          </>
-        ) : (
-          <>
-            {/* Form Fields */}
-            <h2 className="form-step-title">{config.steps[currentStep].title}</h2>
-            <div className="form-fields">
-              {config.steps[currentStep].fields.map(field => (
-                <div className="input-group" key={field.name}>
-                  <label>
-                    {field.label}
-                    {field.required && <span className="required">*</span>}
-                  </label>
-
-                  {field.type === 'select' ? (
-                    <select
-                      className={`input-field ${errors[field.name] ? 'error' : ''}`}
-                      value={formData[field.name] || ''}
-                      onChange={e => updateField(field.name, e.target.value)}
-                    >
-                      <option value="">Sélectionner...</option>
-                      {field.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                    </select>
-                  ) : field.type === 'textarea' ? (
-                    <textarea
-                      className={`input-field ${errors[field.name] ? 'error' : ''}`}
-                      placeholder={field.placeholder || ''}
-                      value={formData[field.name] || ''}
-                      onChange={e => updateField(field.name, e.target.value)}
-                    />
-                  ) : (
-                    <input
-                      className={`input-field ${errors[field.name] ? 'error' : ''}`}
-                      type={field.type}
-                      placeholder={field.placeholder || ''}
-                      value={formData[field.name] || ''}
-                      onChange={e => updateField(field.name, e.target.value)}
-                      min={field.min}
-                      max={field.max}
-                      step={field.step}
-                    />
+                  {i < stepLabels.length - 1 && (
+                    <div className={`step-connector ${i < currentStep ? 'filled' : ''}`} />
                   )}
-
-                  {errors[field.name] && (
-                    <span style={{ fontSize: '0.72rem', color: '#ff6b6b' }}>{errors[field.name]}</span>
-                  )}
-                </div>
+                </React.Fragment>
               ))}
             </div>
 
-            <div className="form-actions">
-              {currentStep > 0 && (
-                <button className="btn-secondary" onClick={handlePrev}>← Précédent</button>
-              )}
-              <button className="btn-primary" style={{ padding: '12px 32px' }} onClick={handleNext}>
-                {currentStep < totalFormSteps - 1 ? 'Suivant →' : 'Vérifier →'}
-              </button>
-              <button className="btn-ghost" onClick={onCancel}>Annuler</button>
+            <div className="step-header-info">
+              <span className="step-count-pill">
+                Étape {currentStep + 1} / {stepLabels.length}
+              </span>
+              <h2 className="step-active-title">{stepLabels[currentStep]}</h2>
             </div>
-          </>
-        )}
+          </div>
+
+          {/* Form Content Area */}
+          {isReviewStep ? (
+            <div className="form-content-area">
+              <p className="form-intro-note">
+                Vérifiez les données saisies ci-dessous avant de valider l'enregistrement officiel.
+              </p>
+              
+              <div className="review-list">
+                {config.steps.map((step, si) => (
+                  <div className="review-block" key={si}>
+                    <h3 className="review-block-title">{step.title}</h3>
+                    <div className="review-rows-grid">
+                      {step.fields.map(f => (
+                        <div className="review-item" key={f.name}>
+                          <span className="r-label">{f.label}</span>
+                          <span className="r-value">{formData[f.name] || '—'}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="form-actions-sym">
+                <button className="btn-secondary" onClick={handlePrev}>
+                  ← Précédent
+                </button>
+                <button className="btn-primary form-submit-btn" onClick={() => handleSave(false)}>
+                  💾 Enregistrer la fiche
+                </button>
+                <button className="btn-ghost" onClick={() => handleSave(true)}>
+                  Sauvegarder brouillon
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="form-content-area">
+              <div className="form-fields-sym">
+                {config.steps[currentStep].fields.map(field => (
+                  <div className="input-group-sym" key={field.name}>
+                    <label className="input-label-sym">
+                      <span>{field.label}</span>
+                      {field.required && <span className="required-star">*</span>}
+                    </label>
+
+                    {field.type === 'select' ? (
+                      <select
+                        className={`input-field-sym ${errors[field.name] ? 'has-error' : ''}`}
+                        value={formData[field.name] || ''}
+                        onChange={e => updateField(field.name, e.target.value)}
+                      >
+                        <option value="">Sélectionner une option…</option>
+                        {field.options.map(opt => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    ) : field.type === 'textarea' ? (
+                      <textarea
+                        className={`input-field-sym textarea-sym ${errors[field.name] ? 'has-error' : ''}`}
+                        placeholder={field.placeholder || 'Saisissez vos observations…'}
+                        value={formData[field.name] || ''}
+                        onChange={e => updateField(field.name, e.target.value)}
+                        rows={4}
+                      />
+                    ) : (
+                      <input
+                        className={`input-field-sym ${errors[field.name] ? 'has-error' : ''}`}
+                        type={field.type}
+                        placeholder={field.placeholder || ''}
+                        value={formData[field.name] || ''}
+                        onChange={e => updateField(field.name, e.target.value)}
+                        min={field.min}
+                        max={field.max}
+                        step={field.step}
+                      />
+                    )}
+
+                    {errors[field.name] && (
+                      <span className="field-error-msg">{errors[field.name]}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="form-actions-sym">
+                {currentStep > 0 && (
+                  <button className="btn-secondary" onClick={handlePrev}>
+                    ← Précédent
+                  </button>
+                )}
+                <button className="btn-primary form-next-btn" onClick={handleNext}>
+                  {currentStep < totalFormSteps - 1 ? 'Étape suivante →' : 'Vérifier la fiche →'}
+                </button>
+                <button className="btn-ghost" onClick={onCancel}>
+                  Annuler
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
