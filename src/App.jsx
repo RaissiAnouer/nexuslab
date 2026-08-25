@@ -8,8 +8,16 @@ import RecordForm from './components/RecordForm';
 import { sampleRecords } from './data/registersData';
 
 export default function App() {
-  const [screen, setScreen] = useState('dashboard');
-  const [user, setUser] = useState({ name: 'Utilisateur' });
+  const [user, setUser] = useState(() => {
+    const isAuth = localStorage.getItem('nexus_authenticated') === 'true';
+    const method = localStorage.getItem('nexus_auth_method');
+    return isAuth ? { name: 'Utilisateur Lab', method } : null;
+  });
+
+  const [screen, setScreen] = useState(() => {
+    const isAuth = localStorage.getItem('nexus_authenticated') === 'true';
+    return isAuth ? 'dashboard' : 'landing';
+  });
   const [activeRegister, setActiveRegister] = useState(null);
   const [activeRecord, setActiveRecord] = useState(null);
 
@@ -75,8 +83,7 @@ export default function App() {
 
   // Navigation handlers
   const handleGetStarted = () => {
-    setUser({ name: 'Utilisateur' });
-    setScreen('dashboard');
+    setScreen('auth');
   };
 
   const handleAuthSuccess = (userData) => {

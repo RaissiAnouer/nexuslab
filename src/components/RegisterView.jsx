@@ -40,7 +40,6 @@ export default function RegisterView({ registerId, records = [], onBack, onNewRe
         {filtered.length === 0 ? (
           <div className="empty-state">
             <p>{search ? 'Aucun enregistrement correspondant trouvé.' : 'Aucun enregistrement disponible pour l\'instant.'}</p>
-            <button className="btn-small" onClick={onNewRecord}>{config.newButtonLabel}</button>
           </div>
         ) : (
           <div className="records-table-wrap">

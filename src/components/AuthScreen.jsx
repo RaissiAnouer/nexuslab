@@ -18,9 +18,6 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
       try {
         const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
         if (available) {
-          // Platform authenticator is available — could be Face ID, Touch ID, Windows Hello, etc.
-          // We can't distinguish which specific type from the web, so show both as available
-          // The OS will present the appropriate prompt
           support.face = 'available';
           support.fingerprint = 'available';
         }
@@ -29,14 +26,41 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
       }
     }
 
-    // Check if the device has any biometric at all via older APIs
+    // No native biometric support — show simulation mode
     if (support.face === 'unavailable' && support.fingerprint === 'unavailable') {
-      // No native biometric support detected — show simulation mode
       support.face = 'simulated';
       support.fingerprint = 'simulated';
     }
 
     setBiometricSupport(support);
+  };
+
+  // Trigger the device's native biometric prompt (Face ID / fingerprint / Windows Hello)
+  // We use credentials.create() purely to invoke the OS biometric verification.
+  // The credential itself is not stored — we only care about pass/fail.
+  const triggerBiometricVerification = async () => {
+    const credential = await navigator.credentials.create({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rp: { name: 'NEXUS Lab', id: window.location.hostname },
+        user: {
+          id: crypto.getRandomValues(new Uint8Array(16)), // Random each time — no registration
+          name: 'verification',
+          displayName: 'Vérification biométrique',
+        },
+        pubKeyCredParams: [
+          { type: 'public-key', alg: -7 },
+          { type: 'public-key', alg: -257 },
+        ],
+        authenticatorSelection: {
+          authenticatorAttachment: 'platform',
+          userVerification: 'required',
+        },
+        timeout: 60000,
+      },
+    });
+
+    return !!credential;
   };
 
   const authenticate = async (method) => {
@@ -46,29 +70,13 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
 
     const isSimulated = biometricSupport[method] === 'simulated';
 
+    // ── Real biometric verification ──
     if (!isSimulated && window.PublicKeyCredential) {
       try {
-        const credential = await navigator.credentials.create({
-          publicKey: {
-            challenge: crypto.getRandomValues(new Uint8Array(32)),
-            rp: { name: 'NEXUS Lab', id: window.location.hostname },
-            user: {
-              id: new Uint8Array(16),
-              name: 'lab-user',
-              displayName: 'Laboratory User',
-            },
-            pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
-            authenticatorSelection: {
-              authenticatorAttachment: 'platform',
-              userVerification: 'required',
-            },
-            timeout: 30000,
-          },
-        });
+        const passed = await triggerBiometricVerification();
 
-        if (credential) {
+        if (passed) {
           setStatus('success');
-          // Save preferred method
           localStorage.setItem('nexus_auth_method', method);
           localStorage.setItem('nexus_authenticated', 'true');
           setTimeout(() => onAuthSuccess({ name: 'Utilisateur Lab', method }), 800);
@@ -85,7 +93,7 @@ export default function AuthScreen({ onBack, onAuthSuccess }) {
       }
     }
 
-    // Simulated fallback for devices without biometric hardware
+    // ── Simulated fallback for devices without biometric hardware ──
     setTimeout(() => {
       const label = method === 'face' ? 'Authentification faciale' : 'Empreinte digitale';
       const confirmed = window.confirm(
