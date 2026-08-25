@@ -4,10 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "copy:models": "node scripts/copy-models.js",
+    "dev": "node scripts/copy-models.js && vite",
+    "build": "node scripts/copy-models.js && vite build",
     "preview": "vite preview",
-    "cap:build": "vite build && cap sync android",
+    "cap:build": "npm run build && cap sync android",
     "cap:open": "cap open android"
   },
   "dependencies": {
@@ -15,6 +16,7 @@
     "@capacitor/android": "^8.5.0",
     "@capacitor/cli": "^8.5.0",
     "@capacitor/core": "^8.5.0",
+    "@vladmandic/face-api": "^1.7.15",
     "capacitor-native-settings": "^8.2.0",
     "lucide-react": "^0.460.0",
     "react": "^18.3.1",
