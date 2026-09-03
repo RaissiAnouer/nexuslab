@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="tn">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS Lab — Guide Technique & Cahier des Fonctions (en Derja)</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 16mm 14mm 16mm 14mm;
+      @bottom-center {
+        content: "NEXUS Lab — Guide Technique & Architecture (Derja) • Page " counter(page);
+        font-size: 8pt;
+        color: #64748b;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #ffffff;
+      color: #1e293b;
+      line-height: 1.65;
+      font-size: 10pt;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Cover Page */
+    .cover-page {
+      page-break-after: always;
+      height: 98vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 30px;
+      background: linear-gradient(145deg, #0b0f19 0%, #1e1b4b 50%, #0f172a 100%);
+      color: #ffffff;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover-page::before {
+      content: "";
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 6px 14px;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      border-radius: 20px;
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #818cf8;
+      text-transform: uppercase;
+    }
+
+    .cover-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cover-inst-logo {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .cover-inst-logo img {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .cover-title-box {
+      margin-top: 36px;
+    }
+
+    .cover-logo {
+      font-size: 44pt;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.05;
+      margin: 0 0 10px 0;
+      background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .cover-subtitle {
+      font-size: 16pt;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin: 0 0 20px 0;
+    }
+
+    .cover-derja-tagline {
+      font-size: 11pt;
+      color: #94a3b8;
+      max-width: 550px;
+      line-height: 1.7;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 16px 20px;
+      border-left: 4px solid #6366f1;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 40px;
+      background: rgba(15, 23, 42, 0.7);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .cover-meta-item h5 {
+      margin: 0 0 5px 0;
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+    }
+
+    .cover-meta-item p {
+      margin: 0;
+      font-size: 10pt;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+
+    .cover-footer {
+      font-size: 8.5pt;
+      color: #64748b;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 15px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4 {
+      color: #0f172a;
+      font-weight: 800;
+      page-break-after: avoid;
+    }
+
+    h1 {
+      font-size: 18pt;
+      border-bottom: 2.5px solid #4f46e5;
+      padding-bottom: 8px;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 .chapter-num {
+      background: #4f46e5;
+      color: #ffffff;
+      font-size: 10pt;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    h2 {
+      font-size: 13.5pt;
+      color: #1e1b4b;
+      border-left: 4px solid #0284c7;
+      padding-left: 10px;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      font-size: 11pt;
+      color: #334155;
+      margin-top: 18px;
+      margin-bottom: 8px;
+    }
+
+    h4 {
+      font-size: 9.5pt;
+      color: #475569;
+      margin-top: 12px;
+      margin-bottom: 6px;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+      text-align: justify;
+    }
+
+    /* Derja Highlight box */
+    .derja-box {
+      background: #f8fafc;
+      border-left: 4px solid #6366f1;
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 12px 0 16px 0;
+      font-size: 9.5pt;
+      color: #1e293b;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .derja-box strong {
+      color: #4338ca;
+    }
+
+    .derja-box.callout-info {
+      border-left-color: #0284c7;
+      background: #f0f9ff;
+    }
+
+    .derja-box.callout-warning {
+      border-left-color: #eab308;
+      background: #fefce8;
+    }
+
+    .derja-box.callout-success {
+      border-left-color: #10b981;
+      background: #ecfdf5;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      font-size: 7.5pt;
+      font-weight: 700;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-blue { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .badge-purple { background: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
+    .badge-green { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .badge-yellow { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .badge-dark { background: #0f172a; color: #38bdf8; border: 1px solid #334155; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 18px 0;
+      font-size: 8.5pt;
+      page-break-inside: avoid;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 7.5pt;
+      letter-spacing: 0.5px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    /* Code Blocks */
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Courier New', Courier, monospace;
+      font-size: 8pt;
+      overflow-x: hidden;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin: 8px 0 14px 0;
+      border: 1px solid #1e293b;
+      page-break-inside: avoid;
+    }
+
+    code {
+      font-family: 'Consolas', 'Courier New', Courier, monospace;
+      background: #f1f5f9;
+      color: #0369a1;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 8.5pt;
+    }
+
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 12px 0 16px 0;
+      page-break-inside: avoid;
+    }
+
+    .feature-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #ffffff;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+
+    .feature-card h4 {
+      margin: 0 0 6px 0;
+      color: #1e1b4b;
+      font-size: 9.5pt;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feature-card p {
+      margin: 0;
+      font-size: 8.5pt;
+      color: #475569;
+    }
+
+    /* Flow diagram visualizer */
+    .flow-step-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 14px 0;
+      page-break-inside: avoid;
+    }
+
+    .flow-node {
+      text-align: center;
+      flex: 1;
+    }
+
+    .flow-node-title {
+      font-size: 8pt;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .flow-node-sub {
+      font-size: 7pt;
+      color: #64748b;
+    }
+
+    .flow-arrow {
+      color: #6366f1;
+      font-weight: 800;
+      font-size: 12pt;
+      padding: 0 4px;
+    }
+
+    .page-break {
+      page-break-after: always;
+    }
+
+    .toc-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed #cbd5e1;
+      padding: 6px 0;
+      font-size: 9pt;
+      color: #334155;
+    }
+
+    .toc-item strong {
+      color: #0f172a;
+    }
+
+    .toc-num {
+      color: #6366f1;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PAGE DE COUVERTURE
+       ═══════════════════════════════════════════════════════ -->
+  <div class="cover-page">
+    <div>
+      <div class="cover-header-top">
+        <span class="cover-badge">Laboratoire &amp; Industrie 4.0</span>
+        <div class="cover-inst-logo">
+          <img src="logo.png" alt="INTeK Logo" />
+        </div>
+      </div>
+      <div class="cover-title-box">
+        <div class="cover-logo">NEXUS Lab</div>
+        <div class="cover-subtitle">Guide Technique, Architecture &amp; Cahier des Fonctions</div>
+        <div class="cover-derja-tagline">
+          <strong>Chnowa hedha l-document?</strong><br>
+          Hedha guide complet bel <strong>Derja Tounsia</strong> yfassar kol sater fi application <em>NEXUS Lab</em>:
+          kifeh maamoula l-architecture, chnowa l-tech stack mestaamlino (React 18, Vite, Capacitor, Offline AI Face Recognition, Tesseract OCR),
+          w kifeh kol fonction men App.jsx lin l-FaceAuthModal w l-OcrScanner tekhdem me dakhil b-el kood w l-mantique.
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="cover-meta-grid">
+        <div class="cover-meta-item">
+          <h5>Application</h5>
+          <p>NEXUS Lab (Nova Mobile)</p>
+        </div>
+        <div class="cover-meta-item">
+          <h5>Tech Stack</h5>
+          <p>React 18 + Vite + Capacitor</p>
+        </div>
+        <div class="cover-meta-item">
+          <h5>Moteur IA</h5>
+          <p>100% Offline Face-API + OCR</p>
+        </div>
+        <div class="cover-meta-item">
+          <h5>Plateforme</h5>
+          <p>Mobile Android &amp; Web PWA</p>
+        </div>
+        <div class="cover-meta-item">
+          <h5>Langue d'explication</h5>
+          <p>Tunisian Derja (Tounsi)</p>
+        </div>
+        <div class="cover-meta-item">
+          <h5>Date d'édition</h5>
+          <p>Mars 2026</p>
+        </div>
+      </div>
+
+      <div class="cover-footer">
+        <span>Laboratoire Informatique &amp; Systèmes Embarqués</span>
+        <span>Document Confidentiel &amp; Technique</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       TABLE DES MATIERES & INTRODUCTION
+       ═══════════════════════════════════════════════════════ -->
+  <h1><span class="chapter-num">00</span> Sommaire w Table des Matières</h1>
+
+  <div class="derja-box callout-info">
+    <strong>Fikra aala l-sommaire:</strong> El guide hedha m9assem l-10 ajzé2 kbar. Bch tebda tefhem l-fikra l-aamma mtaa l-application, ba3d l-architecture w l-outils li khdemna bihom, ba3d nemchiw étape par étape nchoufou kol fichier w kol fonction chnowa taamel bil tad9i9.
+  </div>
+
+  <div style="margin: 20px 0;">
+    <div class="toc-item">
+      <span><strong class="toc-num">01.</strong> Chnowa NEXUS Lab w chkoun l-hadaf mteeha? (Vision Générale)</span>
+      <span>Page 3</span>
+    </div>
+    <div class="toc-item">
+      <span><strong class="toc-num">02.</strong> L-Architecture mtaa l-App w Tech Stack li mestaamlino</span>
+      <span>Page 4</span>
+    </div>
+    <div class="toc-item">
+      <span><strong class="toc-num">03.</strong> Arborescence w Dossiers mtaa l-Projet (Folder Structure)</span>
+      <span>Page 5</span>
+    </div>
+    <div class="toc-item">
+      <span><strong class="toc-num">04.</strong> Cycle de Vie w Navigation Flow (Kifeh l-User Yetnaqqel)</span>
+      <span>Page 6</span>
+    </div>
+    <div class="toc-item">
+      <span><strong class="toc-num">05.</strong> Charh Moufassal: scripts/copy-models.js &amp; src/main.jsx</span>
+      <span>Page 7</span>
+    </div>
+    <div class="toc-item">
+      <span><strong class="toc-num">06.</strong> Charh Moufassal: src/App.jsx (El Mokh mtaa l-App)</span>
+      <span>Page 8</span>
+    </div>
+    <div class="toc-item">
+      <span><strong class="toc-num">07.</strong> L-Intelligence Artificielle Locale: faceRecognition.js &amp; FaceAuthModal.jsx</span>
+      <span>Page 10</span>
+    </div>
+    <div class="toc-item">
+      <span><strong class="toc-num">08.</strong> L-OCR Intégré: OcrScanner.jsx (Lecture automatique des documents)</span>
+      <span>Page 13</span>
+    </div>
+    <div class="toc-item">
+      <span><strong class="toc-num">09.</strong> Les Composants Métier: Dashboard, RegisterView, RecordForm &amp; Detail</span>
+      <span>Page 15</span>
+    </div>
+    <div class="toc-item">
+      <span><strong class="toc-num">10.</strong> Kifeh tcompili w t-lancih ala Android (Capacitor Build Guide)</span>
+      <span>Page 18</span>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAPITRE 1: VISION GENERALE
+       ═══════════════════════════════════════════════════════ -->
+  <h1><span class="chapter-num">01</span> Chnowa NEXUS Lab w chkoun l-hadaf mteeha?</h1>
+
+  <div class="derja-box">
+    <strong>Bel Derja Tounsia:</strong><br>
+    Fi ay laboratoire (pharmacie, chimie, contrôle qualité mtaa l-mé w l-ghdha, recherche scientifique), les techniciens w les ingénieurs dima ya9yidou kol chay fi <em>des cahiers papier</em>: mesure pH, suivi mtaa les colonnes, préparation mtaa les réactifs (NaOH, acides), consigne mtaa l-khedma mtaa l-fari9 li ba3dou.
+    <br><br>
+    L-mochkla l-kbira fel papier chnouwa?
+    <ul>
+      <li>El papier yet9atta3, yti7 fih l-mé walla les produits chimiques.</li>
+      <li>Tji tlawej aala fiche sarit ch'har ltéli, yabda l-wa9t ydhiaa w tlouej bel saf7a bel saf7a.</li>
+      <li>Ghlat fil ktaba w fil calculs.</li>
+      <li>Ma famech traçabilité s7i7a chkoun da5al w chkoun 5raj.</li>
+    </ul>
+    <strong>NEXUS Lab</strong> jet bch t7ell l-mochkla hedhi à 100%! Roddet l-cahiers el kol <strong>numériques</strong> fi tablette walla smartphone Android, w zedna fihom deux super-pouvoirs:
+    <strong>Reconnaissance Faciale Biométrique 100% hors-ligne</strong> (ma test7a9ch internet) w <strong>Scanner OCR</strong> yeqra l-warqa b-caméra w yaamar l-formulaire fi thweyna!
+  </div>
+
+  <h2>Les 4 Fonctions Clés mtaa l-Application</h2>
+
+  <div class="card-grid">
+    <div class="feature-card">
+      <h4>🔒 Authentification Faciale Biométrique</h4>
+      <p>Technicien ya3mel scan l-wijhou direct bel caméra mtaa l-tel. Moteur IA local ythabbet mennou fi a9al men 500 millisecondes men ghir ma yabath tsawer l-hatta serveur externe.</p>
+    </div>
+    <div class="feature-card">
+      <h4>📋 Registres Numériques Personnalisés</h4>
+      <p>4 registres kbar (pH, Suivi des opérations, Cahier de préparation réactifs, Cahier de consigne) m3a possibilité de rajouter échantillon, équipements, w expériences.</p>
+    </div>
+    <div class="feature-card">
+      <h4>📷 Scanner OCR Intelligent (Tesseract)</h4>
+      <p>Ken l-technicien andou warqa 9dima walla rapport maktoub, yaamel tsawira w l-OCR ydetecti les champs (Désignation, N° Lot, Opérateur) w y3abbi l-formulaire wa7dou.</p>
+    </div>
+    <div class="feature-card">
+      <h4>⚡ Mode Hors-Ligne Total &amp; Rapide</h4>
+      <p>L-app tekhdem fi labo taht l-9aa3 walla fi blasa ma fehech réseau (Zero Wifi / Zero 4G). Kol chay ytsajjel fil <code>localStorage</code> mtaa l-appareil.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAPITRE 2: ARCHITECTURE & TECH STACK
+       ═══════════════════════════════════════════════════════ -->
+  <h1><span class="chapter-num">02</span> L-Architecture mtaa l-App w Tech Stack</h1>
+
+  <div class="derja-box">
+    <strong>Kifeh tbennet l-application?</strong><br>
+    L-application masnouaa b-style <em>Hybrid Mobile Application</em>: kood web moderne (React + Vite) mghallaf b-<strong>Capacitor</strong> bch ywelli fichier <code>.apk</code> native yetsab aala ay tablette walla smartphone Android.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Technologie</th>
+        <th>Version</th>
+        <th>Rôle mteeha fel projet</th>
+        <th>Aléch e5tarnéha?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>React</strong></td>
+        <td>18.3.1</td>
+        <td>Frontend UI Framework (Composants, States, Hooks)</td>
+        <td>Composants réutilisables, rendu rapide, écosystème kbir.</td>
+      </tr>
+      <tr>
+        <td><strong>Vite</strong></td>
+        <td>5.4.11</td>
+        <td>Build Tool &amp; Dev Server</td>
+        <td>Khafif yaser, instant Hot Module Reload (HMR), build tayara.</td>
+      </tr>
+      <tr>
+        <td><strong>Capacitor</strong></td>
+        <td>8.5.0</td>
+        <td>Bridge Native Mobile (Android Container)</td>
+        <td>Ykhallik t-compili l-web app fi Android Studio kima les apps natives.</td>
+      </tr>
+      <tr>
+        <td><strong>@vladmandic/face-api</strong></td>
+        <td>1.7.15</td>
+        <td>Moteur Biométrique IA (TensorFlow.js)</td>
+        <td>Modèle neuronal ydetecti 68 points fil wejh w 128-d descriptor 100% hors-ligne.</td>
+      </tr>
+      <tr>
+        <td><strong>Tesseract.js</strong></td>
+        <td>7.0.0</td>
+        <td>Moteur OCR (Reconnaissance de texte)</td>
+        <td>Moteur open source yeqra l-maktoub fil tsawer (Français + Anglais).</td>
+      </tr>
+      <tr>
+        <td><strong>Vanilla CSS System</strong></td>
+        <td>Custom</td>
+        <td>Styling complet (Thème Cyber Lab, HUD, animations)</td>
+        <td>Contrôle absolu aala design, zéro dépendance lourde, performance maximale.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-break"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAPITRE 3: FOLDER STRUCTURE
+       ═══════════════════════════════════════════════════════ -->
+  <h1><span class="chapter-num">03</span> Arborescence w Dossiers mtaa l-Projet</h1>
+
+  <div class="derja-box">
+    <strong>Fikra aal structure:</strong> Kol chay mratteb bel behi fel dossier <code>src/</code>. Famech khalta bin les données, les composants visual, w l-logique d'IA.
+  </div>
+
+  <pre>
+nexus/
+├── android/                   # Projet Android natif créé par Capacitor (Gradle, Manifest, Java)
+├── public/                    # Fichiers statiques (icons, images, manifest.json)
+│   ├── models/                # Poids des réseaux de neurones Face-API (.bin, .json)
+│   └── iot-bg.png             # Fond d'écran haute résolution de la Landing Page
+├── scripts/
+│   └── copy-models.js         # Script Node.js li ycopier les modèles IA automatiquement
+├── src/
+│   ├── assets/                # Logos, SVG, images UI
+│   ├── components/            # Les écrans w les composants React mtaa l-interface
+│   │   ├── AuthScreen.jsx     # Écran d'accueil biométrique (Gateway)
+│   │   ├── Dashboard.jsx      # Tableau de bord principal (KPIs, Registres, Recherche)
+│   │   ├── FaceAuthModal.jsx  # Modal caméra interactif (Scan, Enrôlement, Gestion profil)
+│   │   ├── LandingPage.jsx    # Page de présentation initiale
+│   │   ├── OcrScanner.jsx     # Modal scanner de texte intelligent (Tesseract)
+│   │   ├── RecordDetail.jsx   # Visualisation détaillée d'une fiche labo enregistrée
+│   │   ├── RecordForm.jsx     # Formulaire dynamique multi-étapes (Stepper)
+│   │   └── RegisterView.jsx   # Liste & tableau des fiches d'un registre donné
+│   ├── data/
+│   │   └── registersData.js   # Définitions des registres, formulaires et schémas
+│   ├── utils/
+│   │   └── faceRecognition.js # Fonctions mathématiques w IA (chargement, détection, distance)
+│   ├── App.jsx                # Composant Racine: gestion du State global et navigation
+│   ├── index.css              # Tout le design system CSS de l'application
+│   └── main.jsx               # Point d'entrée de React 18 (DOM Mount)
+├── capacitor.config.json      # Configuration de l'app mobile (AppId, Nom, WebDir)
+├── package.json               # Liste des dépendances et scripts npm
+└── vite.config.js             # Configuration du bundler Vite
+  </pre>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAPITRE 4: CYCLE DE VIE & NAVIGATION
+       ═══════════════════════════════════════════════════════ -->
+  <h1><span class="chapter-num">04</span> Cycle de Vie w Navigation Flow</h1>
+
+  <div class="derja-box">
+    <strong>Kifeh l-utilisateur yetnaqqel fel application?</strong><br>
+    Fil application hedhi, ma stamelnech <code>react-router-dom</code> 5ater fi mobile app standalone khfifa, l-masta7san testaamel <strong>State-based screen routing</strong>.
+    L-state esmou <code>screen</code> mawjoud fi <code>App.jsx</code>, w houwa li y9arrer chnouwa yaffichi fel moment hedhika:
+  </div>
+
+  <div class="flow-step-bar">
+    <div class="flow-node">
+      <span class="badge badge-purple">1. LANDING</span>
+      <div class="flow-node-title">LandingPage</div>
+      <div class="flow-node-sub">Presentation &amp; CTA</div>
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node">
+      <span class="badge badge-blue">2. AUTH</span>
+      <div class="flow-node-title">AuthScreen</div>
+      <div class="flow-node-sub">Scan Face-API</div>
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node">
+      <span class="badge badge-green">3. DASH</span>
+      <div class="flow-node-title">Dashboard</div>
+      <div class="flow-node-sub">Stats &amp; 4 Registres</div>
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node">
+      <span class="badge badge-yellow">4. REGISTRE</span>
+      <div class="flow-node-title">RegisterView</div>
+      <div class="flow-node-sub">Tableau &amp; Filtres</div>
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node">
+      <span class="badge badge-dark">5. FORM / VIEW</span>
+      <div class="flow-node-title">RecordForm</div>
+      <div class="flow-node-sub">Stepper + OCR</div>
+    </div>
+  </div>
+
+  <div class="derja-box callout-success">
+    <strong>Sécurité mémorielle (Persistence):</strong><br>
+    Wa9teli l-utilisateur yconnecti b-wijhou bel behi, <code>App.jsx</code> t9ayyed fil <code>localStorage</code>:
+    <code>nexus_authenticated = 'true'</code>. Maaneha ken l-technicien ysakker l-application w yhelha marra okhra, ma yet3addach aal landing page, yet3adda direct lel <strong>Dashboard</strong> men ghir t3atil! Ken yenzel <strong>Déconnexion</strong>, yetfasakh l-clef w yarjaa lel Landing.
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAPITRE 5: SCRIPTS & MAIN.JSX
+       ═══════════════════════════════════════════════════════ -->
+  <h1><span class="chapter-num">05</span> Charh: copy-models.js &amp; main.jsx</h1>
+
+  <h2>1. scripts/copy-models.js — Synchronisation des Modèles IA</h2>
+
+  <div class="derja-box">
+    <strong>Chnowa l-hadaf mennou?</strong><br>
+    L-modèles neuronaux mtaa <code>face-api</code> mawjoudin fi <code>node_modules/@vladmandic/face-api/model</code>.
+    Ama l-navigateur walla l-WebView fil mobile ma ynajjamch yaamel <code>fetch()</code> direct men <code>node_modules</code>!
+    Lezem ykounou mawjoudin fi dossier public: <code>public/models/</code>.
+    El script hedha ykhedmou npm automatiquement 9bal <code>npm run dev</code> walla <code>npm run build</code>.
+  </div>
+
+  <pre><code>// scripts/copy-models.js
+import fs from 'fs';
+import path from 'path';
+
+const srcDir = path.resolve('node_modules/@vladmandic/face-api/model');
+const destDir = path.resolve('public/models');
+
+// 1. Ken dossier public/models mch mawjoud, yasn3ou
+if (!fs.existsSync(destDir)) {
+  fs.mkdirSync(destDir, { recursive: true });
+}
+
+// 2. Ychouf les fichiers li yebdew b 'face_' walla 'tiny_face_' w ycopihom
+if (fs.existsSync(srcDir)) {
+  const files = fs.readdirSync(srcDir);
+  for (const file of files) {
+    if (file.startsWith('face_') || file.startsWith('tiny_face_')) {
+      fs.copyFileSync(path.join(srcDir, file), path.join(destDir, file));
+    }
+  }
+  console.log('✓ Offline AI Face models successfully synced to public/models');
+}</code></pre>
+
+  <h2>2. src/main.jsx — Point d'Entrée de l'Application React</h2>
+
+  <div class="derja-box">
+    <strong>Chnowa l-khedma mteeha?</strong><br>
+    Hedha l-point de départ mtaa ay React app. Yched l-balise HTML <code>&lt;div id="root"&gt;&lt;/div&gt;</code> li mawjouda fi <code>index.html</code>, ykhla9 feha l-React Root b-<code>createRoot()</code>, w ylaanci l-composant <code>&lt;App /&gt;</code> wst <code>&lt;StrictMode&gt;</code>.
+  </div>
+
+  <pre><code>// src/main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  &lt;StrictMode&gt;
+    &lt;App /&gt;
+  &lt;/StrictMode&gt;,
+)</code></pre>
+
+  <div class="page-break"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAPITRE 6: SRC/APP.JSX (LE CERVEAU)
+       ═══════════════════════════════════════════════════════ -->
+  <h1><span class="chapter-num">06</span> Charh: src/App.jsx (El Mokh mtaa l-App)</h1>
+
+  <div class="derja-box">
+    <strong>Aléch App.jsx houwa aham fichier?</strong><br>
+    Khatrou houwa <strong>l-Grand Orchestrator</strong>. Houwa li fih les States l-kbar:
+    chkoun l-user li connecté, chnouwa l-écran li 7alinou taw, chnouwa l-registre li khtarnéh, w <strong>kol les données mtaa les registres (recordsMap)</strong> mawjoudin houni w ytsajjlou fel <code>localStorage</code> kol ma tbaddel ay 7aja.
+  </div>
+
+  <h2>1. Les States Principaux fi App.jsx</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>State Hook</th>
+        <th>Type</th>
+        <th>Chnowa ykheddem bel Derja?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>user</code></td>
+        <td><code>Object | null</code></td>
+        <td>Ychouf ken famma session active: <code>{ name: 'Utilisateur Lab', method: 'face' }</code>. Ken ma fammech yaati <code>null</code>.</td>
+      </tr>
+      <tr>
+        <td><code>screen</code></td>
+        <td><code>String</code></td>
+        <td>L-écran l-hali: <code>'landing'</code>, <code>'auth'</code>, <code>'dashboard'</code>, <code>'register'</code>, <code>'record-detail'</code>, <code>'new-record'</code>.</td>
+      </tr>
+      <tr>
+        <td><code>activeRegister</code></td>
+        <td><code>String | null</code></td>
+        <td>L-identifiant mtaa l-registre li nzil aalih l-user (kima <code>'ph'</code>, <code>'suivi'</code>, <code>'preparation'</code>, <code>'consigne'</code>).</td>
+      </tr>
+      <tr>
+        <td><code>activeRecord</code></td>
+        <td><code>Object | null</code></td>
+        <td>L-fiche labo l-mou3ayna li nhebou naamlou aaleha coup d'oeil fil <code>RecordDetail</code>.</td>
+      </tr>
+      <tr>
+        <td><code>recordsMap</code></td>
+        <td><code>Object</code></td>
+        <td>Dictionnaire fih tableau mtaa les fiches l-kol registre: <code>{ ph: [...], suivi: [...], preparation: [...] }</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2. Les Fonctions Métier fi App.jsx</h2>
+
+  <h3>A. handleSaveRecord(registerId, newRecord)</h3>
+  <div class="derja-box">
+    <strong>Kifeh tekhdem:</strong> Wa9teli l-utilisateur ykamel yaamar formulaire fi <code>RecordForm</code> w yenzel enregistrer, l-fonction hedhi tekhou l-ID mtaa l-registre (ex: <code>'ph'</code>) w l-fiche jdida.
+    Thotha fi <strong>awwel l-tableau</strong> (b-spread operator <code>[newRecord, ...(prev[registerId] || [])]</code>) bch dima a9dem fiches yjiw mel louta w ajdad fiches mel fou9.
+  </div>
+  <pre><code>const handleSaveRecord = (registerId, newRecord) => {
+  setRecordsMap(prev => ({
+    ...prev,
+    [registerId]: [newRecord, ...(prev[registerId] || [])]
+  }));
+};</code></pre>
+
+  <h3>B. handleDeleteRecord(registerId, recordId)</h3>
+  <div class="derja-box">
+    <strong>Kifeh tekhdem:</strong> Tfasakh fiche mo3ayna b-estiemel <code>filter(r => r.id !== recordId)</code>.
+  </div>
+
+  <h3>C. handleClearAllRecords()</h3>
+  <div class="derja-box">
+    <strong>Kifeh tekhdem:</strong> Tfaragh l-base de données locale kemla! Tfasakh la clé <code>nexus_lab_records</code> mel <code>localStorage</code> w trajaa l-map fergha fih les clés l-kol b-des tableaux vides.
+  </div>
+
+  <h3>D. handleLogout()</h3>
+  <div class="derja-box">
+    <strong>Kifeh tekhdem:</strong> Tfasakh <code>nexus_authenticated</code> w <code>nexus_auth_method</code> mel <code>localStorage</code>, t-initialisi <code>user = null</code>, w trajaa l-écran l-<code>'landing'</code>.
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAPITRE 7: INTELLIGENCE ARTIFICIELLE LOCALE
+       ═══════════════════════════════════════════════════════ -->
+  <h1><span class="chapter-num">07</span> L-Intelligence Artificielle Locale</h1>
+
+  <div class="derja-box callout-info">
+    <strong>Chnowa l-moteur biométrique?</strong><br>
+    Mestaamlin <code>@vladmandic/face-api</code> m3a backend <strong>TensorFlow.js</strong>.
+    L-moteur hedha yekhdem <strong>100% Offline</strong> fi wst l-browser / WebView mtaa l-téléphone. Ma famech compte cloud, ma famech API externe, ma famech tsawer tokhroj barra men taliphoun l-technicien!
+  </div>
+
+  <h2>1. Fichier: src/utils/faceRecognition.js</h2>
+  <p>Fih les fonctions mathématiques w neuronales li yist7a9hom l-système biométrique:</p>
+
+  <h3>A. loadFaceModels()</h3>
+  <div class="derja-box">
+    <strong>Kifeh tekhdem:</strong>
+    Tchargi 3 réseaux de neurones kbar mel dossier <code>/models</code>:
+    <ol>
+      <li><code>tinyFaceDetector</code>: Réseau rapide li ydetecti win mawjoud l-wejh fel caméra (Bounding Box).</li>
+      <li><code>faceLandmark68TinyNet</code>: Ylawej aala 68 point précis fel wejh (3inin, khnefer, fomm, contours).</li>
+      <li><code>faceRecognitionNet</code>: Réseau neuronal profond li ykharrej <strong>vecteur de 128 chiffres (Float32Array)</strong> yetsamma <em>Face Descriptor</em> (L-empreinte digitale mtaa l-wejh).</li>
+    </ol>
+  </div>
+
+  <pre><code>export async function loadFaceModels() {
+  if (modelsLoaded) return true;
+  if (modelLoadPromise) return modelLoadPromise;
+
+  modelLoadPromise = (async () => {
+    await faceapi.tf.ready();
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
+      faceapi.nets.faceLandmark68TinyNet.loadFromUri('/models'),
+      faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
+    ]);
+    modelsLoaded = true;
+    return true;
+  })();
+  return modelLoadPromise;
+}</code></pre>
+
+  <h3>B. detectFaceWithDescriptor(inputElement)</h3>
+  <div class="derja-box">
+    <strong>Kifeh tekhdem:</strong>
+    Tekhou la balise <code>&lt;video&gt;</code> mtaa l-caméra, t-analysih b-<code>TinyFaceDetectorOptions</code> (inputSize: 320, scoreThreshold: 0.5), w trajaa l-descriptor (vecteur 128 dimensions) mtaa l-wejh li t3adda.
+  </div>
+
+  <h3>C. computeFaceDistance(desc1, desc2) &amp; distanceToSimilarity(distance)</h3>
+  <div class="derja-box">
+    <strong>El Mathématiques mtaa l-Reconnaissance:</strong><br>
+    Kifeh l-ordinateur yaaref eli wejh X houwa nafsou wejh Y?
+    Ya7seb <strong>l-Distance Euclidienne (Euclidean Distance)</strong> bin les deux vecteurs de 128 dimensions:<br>
+    <code>d = sqrt( sum( (desc1[i] - desc2[i])^2 ) )</code><br>
+    <ul>
+      <li>Ken <strong>distance &lt; 0.48</strong>: Match s7i7 100%! Houwa bidou l-chakhs.</li>
+      <li>Ken distance kbir barcha (&gt; 0.6): Wejh ghayeer, mch houwa.</li>
+    </ul>
+    L-fonction <code>distanceToSimilarity()</code> tbaddel l-distance l-pourcentage (%) bch l-user ychoufou w yefhmou:
+    <code>score = Math.round((1 - distance / 0.6) * 100)</code>.
+  </div>
+
+  <div class="page-break"></div>
+
+  <h2>2. Fichier: src/components/FaceAuthModal.jsx</h2>
+
+  <div class="derja-box">
+    <strong>Chnowa hedha l-composant?</strong><br>
+    Hedha houwa l-modal li yodhhor wa9teli technicien yenzel aala "Reconnaissance Faciale".
+    Fih 3 modes kbar:
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Mode</th>
+        <th>Aléch yoslo7?</th>
+        <th>Chnowa yaffichi?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>'scan'</code></td>
+        <td>Mode de Vérification Directe</td>
+        <td>Caméra live m3a HUD Cyberpunk (réticule, laser de scan néon). Kol 300ms yaamel analyse l-wijh l-user. Ken l-distance &lt; 0.48, yaffichi "Identité confirmée" w yhall l-app direct!</td>
+      </tr>
+      <tr>
+        <td><code>'enroll'</code></td>
+        <td>Enregistrement d'un Nouveau Visage</td>
+        <td>Technicien yaamel capture l-wijhou, l-IA testakhrej l-empreinte 128-d, yekteb esmou (ex: "Dr. Anouer"), w yenzel <strong>Sauvegarder</strong> fel <code>localStorage</code>.</td>
+      </tr>
+      <tr>
+        <td><code>'manage'</code></td>
+        <td>Gestion du Profil</td>
+        <td>Yaffichi l-photo mtaa l-visage enregistré, date d'enregistrement, w yabda andou l-choix bch yaamel scan, ybaddel b-tswira jdida, walla yfasakh l-profil jemla.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Boucle Temps Réel fi 'scan' mode:</h3>
+  <pre><code>// useEffect d'inférence temps réel dans FaceAuthModal.jsx
+useEffect(() => {
+  if (mode !== 'scan' || !cameraActive || !enrolledFace) return;
+
+  const performScan = async () => {
+    const detection = await detectFaceWithDescriptor(videoRef.current);
+    if (!detection) {
+      setScanStatus('searching');
+      return;
+    }
+
+    setScanStatus('analyzing');
+    const distance = computeFaceDistance(detection.descriptor, enrolledFace.descriptor);
+    const matchPercent = distanceToSimilarity(distance);
+
+    if (distance &lt; 0.48) {
+      // Authentification Réussie !
+      setScanStatus('matched');
+      setStatusMessage('Identite confirmee : ' + enrolledFace.name + ' (' + matchPercent + '%)');
+      setTimeout(() => {
+        stopCamera();
+        onSuccess({ name: enrolledFace.name, method: 'face', confidence: matchPercent });
+      }, 900);
+    }
+  };
+
+  scanIntervalRef.current = setInterval(performScan, 300); // Analyse chaque 300ms
+  return () => clearInterval(scanIntervalRef.current);
+}, [mode, cameraActive, enrolledFace]);</code></pre>
+
+  <div class="page-break"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAPITRE 8: OCR INTEGRE (TESSERACT)
+       ═══════════════════════════════════════════════════════ -->
+  <h1><span class="chapter-num">08</span> L-OCR Intégré: OcrScanner.jsx</h1>
+
+  <div class="derja-box callout-info">
+    <strong>Chnowa l-OCR?</strong><br>
+    OCR maaneha <em>Optical Character Recognition</em>.
+    Fi <strong>NEXUS Lab</strong>, technicien ynajjem ykoun andou warqa imprimée walla formulaire maktoub bel yed.
+    Fi blast ma ya93ad yekteb fih kelma b-kelma b-swab3ou, yenzel aala <strong>Scanner</strong>!
+    L-caméra tekhou tswira, moteur <code>Tesseract.js</code> yeqra l-maktoub l-kol, w l-algorithme mteena yaamar les champs automatiquement!
+  </div>
+
+  <h2>Kifeh l-Algorithme d'Extraction ye5dem? (mapTextToFields)</h2>
+
+  <div class="derja-box">
+    <strong>L-astuce fil kood:</strong><br>
+    El mochkla mtaa l-OCR ennou ykharrej texte brut fih barcha stoura. Kifeh naarfou eli l-kalma hedhika mtaa "Désignation" w l-o5ra mtaa "N° de Lot"?<br>
+    L-fonction <code>mapTextToFields(text, fields)</code> taamel 3 étapes:
+    <ol>
+      <li><strong>Normalisation:</strong> Tna77i les accents b-<code>normalize('NFD').replace(/[\u0300-\u036f]/g, '')</code> bch "Désignation" walla "designation" kif kif.</li>
+      <li><strong>Pattern Matching:</strong> Tlawwej aala l-style <code>Label : valeur</code> (ex: <code>Désignation : Eau déionisée</code>). L-valeur li ba3d les deux-points <code>:</code> takhdhou direct lel champ hedheka!</li>
+      <li><strong>Sequential Fallback:</strong> Ken l-warqa ma fehech les deux-points <code>:</code>, taamel analyse des lignes w t-attribuer les valeurs l-les champs textuels b-tartib l-manti9i.</li>
+    </ol>
+  </div>
+
+  <pre><code>// Extrait de mapTextToFields dans OcrScanner.jsx
+const mapTextToFields = (text, fields) => {
+  const mapped = {};
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+  for (const field of fields) {
+    if (field.type === 'date' || field.type === 'time') continue;
+    const label = field.label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    for (const line of lines) {
+      const normalizedLine = line.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      if (normalizedLine.includes(label)) {
+        const colonIdx = line.indexOf(':');
+        if (colonIdx !== -1) {
+          mapped[field.name] = line.substring(colonIdx + 1).trim();
+          break;
+        }
+      }
+    }
+  }
+  return mapped;
+};</code></pre>
+
+  <div class="page-break"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAPITRE 9: COMPOSANTS METIER
+       ═══════════════════════════════════════════════════════ -->
+  <h1><span class="chapter-num">09</span> Les Composants Métier du Laboratoire</h1>
+
+  <h2>1. src/components/Dashboard.jsx</h2>
+  <div class="derja-box">
+    <strong>El Rôle:</strong> L-écran principal ba3d l-authentification.
+    <ul>
+      <li><strong>Statistiques en temps réel:</strong> Total des fiches, fiches saisies aujourd'hui, fiches en attente (brouillons), fiches finalisées.</li>
+      <li><strong>Moteur de Recherche Global (Full-Text):</strong> Ylawwej wst kol les fiches mtaa les 4 registres fard wa9t avec <code>useMemo</code>.</li>
+      <li><strong>Bouton "Effacer tous les enregistrements":</strong> Yfaragh l-base b-confirmation.</li>
+      <li><strong>Cartes des Registres:</strong> Kifeh ykhellik tekhtar ay registre bch todkholou.</li>
+    </ul>
+  </div>
+
+  <h2>2. src/components/RegisterView.jsx</h2>
+  <div class="derja-box">
+    <strong>El Rôle:</strong> Affichage d'un registre précis (ex: Registre pH).
+    <ul>
+      <li>Fih barre de recherche locale t-filtri les fiches mtaa l-registre hedheka.</li>
+      <li>Génération dynamique du tableau selon <code>config.tableColumns</code> w <code>config.columnLabels</code>.</li>
+      <li>Clavier b-click aala ay sater fi tableau yhallek l-fiche fil <code>RecordDetail</code>.</li>
+      <li>Bouton "+ Nouveau" ybadel l-écran l-<code>RecordForm</code>.</li>
+    </ul>
+  </div>
+
+  <h2>3. src/components/RecordForm.jsx (Le Formulaire Multi-Étapes)</h2>
+  <div class="derja-box">
+    <strong>El Rôle:</strong> Formulaire moderne b-nitham <strong>Stepper (Étapes 1, 2, 3...)</strong>.
+    <ul>
+      <li><strong>Validation par étape:</strong> L-fonction <code>validateStep()</code> ma tkhallikch tet3adda lel étape l-ba3dha ela ma t3abbi les champs obligatoires (<code>required: true</code>).</li>
+      <li><strong>Génération Automatique de l'ID:</strong> Formule géniale:<br>
+        <code>const id = prefix + '-2026-' + random;</code> (Ex: <code>PH-2026-4819</code>, <code>SUI-2026-9102</code>).</li>
+      <li><strong>Intégration Directe m3a l-OCR:</strong> Yenzel "Scanner", Tesseract yamel extraction, w l-formulaire yit3abba fi thweyna.</li>
+      <li><strong>Écran de Succès Cyberpunk:</strong> Yaffichi badge vert fih l-ID w yaatik 3 choix: "Voir la fiche", "Nouvelle fiche", walla "Retour au registre".</li>
+    </ul>
+  </div>
+
+  <h2>4. src/data/registersData.js (Le Schéma des Données)</h2>
+  <div class="derja-box">
+    <strong>Aléch khedma pro?</strong><br>
+    Khatrou <strong>Data-Driven Architecture</strong>. Ma 3malnech formulaire codé en dur (hardcoded) l-kol registre!
+    Kol registre andou schéma wadha7 fih les étapes (<code>steps</code>), les champs (<code>fields</code>: text, number, select, textarea, date, time), les colonnes mtaa tableau (<code>tableColumns</code>), w les labels.
+    Ken ghodwa thebb tzid registre jdid (ex: "Registre Déchets Chimiques"), tzidou juste fi <code>registersData.js</code> w l-app kemla tekhdem bih direct men ghir ma tbaddel hata sater kood fil composants UI!
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAPITRE 10: GUIDE BUILD MOBILE ANDROID
+       ═══════════════════════════════════════════════════════ -->
+  <h1><span class="chapter-num">10</span> Kifeh tcompili w t-lancih ala Android</h1>
+
+  <div class="derja-box callout-success">
+    <strong>Kifeh t7awwel l-projet l-application Android APK?</strong><br>
+    Khatrou mestaamlin <strong>Capacitor 8.5</strong>, l-passage men kood web l-projet Android sehel barcha.
+    Haka les commandes li lezem taamelhom bil tartib:
+  </div>
+
+  <h3>Étape 1: Copier les modèles IA w Générer le bundle de production</h3>
+  <pre><code>npm run build</code></pre>
+  <div class="derja-box">
+    <strong>Chnowa yaamel:</strong>
+    1. Ykheddem <code>scripts/copy-models.js</code> bch ycopier les poids neuronaux fi <code>public/models</code>.<br>
+    2. Ykheddem <code>vite build</code> li ycompili l-kood React w ykhorjou fi dossier <code>dist/</code> b-fichiers minified w optimized.
+  </div>
+
+  <h3>Étape 2: Synchroniser avec le projet Android natif</h3>
+  <pre><code>npx cap sync android</code></pre>
+  <div class="derja-box">
+    <strong>Chnowa yaamel:</strong>
+    Yched l-contenu mtaa dossier <code>dist/</code> w ycopih direct wst <code>android/app/src/main/assets/public/</code>,
+    w y-synchronisi les plugins natifs (Biometric Auth, Camera, etc.).
+  </div>
+
+  <h3>Étape 3: Hal l-projet fi Android Studio</h3>
+  <pre><code>npx cap open android</code></pre>
+  <div class="derja-box">
+    <strong>Chnowa yaamel:</strong>
+    Yhall Android Studio direct aala dossier <code>android/</code>.
+    Ghadi t-branchez l-téléphone walla tablette mteek b-câble USB (mode Débogage USB activé) w tenzel aala bouton <strong>Run (▶)</strong>, walla taamel <strong>Build &gt; Build Bundle(s) / APK(s) &gt; Build APK(s)</strong> bch takhou l-fichier <code>app-debug.apk</code> w tsabbou aala ay appareil!
+  </div>
+
+  <h2>Les Permissions Android Requises (AndroidManifest.xml)</h2>
+  <div class="derja-box">
+    Bch l-caméra tekhdem bel behi fil reconnaissance faciale w fil OCR, lezem les permissions hedhom ykounou mawjoudin fi <code>android/app/src/main/AndroidManifest.xml</code>:
+  </div>
+  <pre><code>&lt;uses-permission android:name="android.permission.CAMERA" /&gt;
+&lt;uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /&gt;
+&lt;uses-feature android:name="android.hardware.camera" android:required="true" /&gt;
+&lt;uses-feature android:name="android.hardware.camera.autofocus" android:required="false" /&gt;</code></pre>
+
+  <!-- Conclusion Box -->
+  <div class="derja-box callout-info" style="margin-top: 30px;">
+    <strong>Khulasa &amp; Naseeha Technique (Conclusion):</strong><br>
+    Projet <strong>NEXUS Lab</strong> masnouaa b-standard mondial (Clean Architecture, Edge AI, Offline First, High-Performance UI).
+    Kol composant fih masnouaa bch ykoun modulable w sehel bch t-developih akther.
+    Bi l-guide hedha, aandek kol l-ma3loumet l-lazma bch t-modifi ay fonction, tzid ay registre jdid, w tcompilih l-ay client fi ay laboratoire!
+  </div>
+
+</body>
+</html>

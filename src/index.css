@@ -96,6 +96,20 @@ html, body {
   animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.landing-logo-img {
+  height: 85px;
+  max-width: 260px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 6px;
+  transition: transform var(--transition-normal);
+}
+
+.landing-logo-img:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
 .landing-tagline {
   font-size: 0.7rem; font-weight: 600; letter-spacing: 4px;
   text-transform: uppercase; color: var(--secondary-text);
@@ -352,6 +366,24 @@ textarea.input-field { min-height: 80px; resize: vertical; line-height: 1.5; }
   display: flex; justify-content: space-between; align-items: center;
   padding: 16px 24px;
   border-bottom: 1px solid var(--border-gray);
+}
+
+.dash-brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash-logo-img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  transition: transform var(--transition-fast);
+}
+
+.dash-logo-img:hover {
+  transform: scale(1.05);
 }
 
 .dash-logo {

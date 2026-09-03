@@ -6,6 +6,7 @@ export default function LandingPage({ onGetStarted }) {
       <img src="/iot-bg.png" alt="" className="landing-bg" draggable={false} />
       <div className="landing-gradient" />
       <div className="landing-content">
+        <img src="/logo.png" alt="INTeK Logo" className="landing-logo-img" />
         <span className="landing-tagline">Gestion de Laboratoire</span>
         <h1 className="landing-title">NEXUS</h1>
         <p className="landing-subtitle">

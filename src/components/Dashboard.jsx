@@ -62,7 +62,10 @@ export default function Dashboard({ userName, recordsMap = {}, onSelectRegister,
     <div className="dashboard">
       {/* Top Header with App Name & Search Icon */}
       <header className="dash-header" style={{ position: 'relative' }}>
-        <div className="dash-logo">NEXUS <span>Lab</span></div>
+        <div className="dash-brand-wrap">
+          <img src="/logo.png" alt="INTeK Logo" className="dash-logo-img" />
+          <div className="dash-logo">NEXUS <span>Lab</span></div>
+        </div>
 
         <div className="dash-header-right" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {showSearch ? (
