@@ -31,3 +31,6 @@ android/captures
 android/.gradle
 android/.idea
 
+*.apk
+
+
